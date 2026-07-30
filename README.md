@@ -1,4 +1,8 @@
-# 🩺 AI Doctor
+<p align="center">
+  <img src="docs/assets/logo.png" alt="AI Doctor logo" width="116">
+</p>
+
+# AI Doctor
 
 **Document intelligence that cites its sources — or admits it doesn't know.**
 
