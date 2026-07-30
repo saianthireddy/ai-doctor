@@ -1,5 +1,5 @@
-<p align="center">
-  <img src="docs/assets/banner.png" alt="AI Doctor" width="760">
+  <p align="center">
+  <img src="docs/assets/banner.png?v=2" alt="AI Doctor" width="820">
 </p>
 
 # AI Doctor
