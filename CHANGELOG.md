@@ -8,7 +8,7 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Nothing yet. See [ROADMAP.md](ROADMAP.md) for what is planned.
 
-## [0.1.0] — 2026-07-29
+## [0.1.0] — 2026-07-30
 
 First release. Everything below is implemented and covered by tests; see the
 status table in the README for what is deliberately *not* claimed.
