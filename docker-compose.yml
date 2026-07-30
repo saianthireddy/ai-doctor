@@ -1,0 +1,50 @@
+# Default `docker compose up` runs AI Doctor alone, with embedded Qdrant and
+# SQLite — no services to provision, which is the point.
+#
+# The postgres and qdrant services below sit behind a profile so they are opt-in:
+#   docker compose --profile production up
+#
+# Those two paths are DECLARED and DOCUMENTED but not verified by this project's
+# CI, which only exercises the default stack. See the status table in README.md.
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: ["8000:8000"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////app/data/aidoctor.db}
+      VECTOR_BACKEND: ${VECTOR_BACKEND:-qdrant}
+      EMBEDDER: ${EMBEDDER:-hashing}
+      LLM: ${LLM:-extractive}
+    volumes: ["aidoctor-data:/app/data"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  qdrant:
+    profiles: ["production"]
+    image: qdrant/qdrant:v1.9.0
+    ports: ["6333:6333"]
+    volumes: ["qdrant-data:/qdrant/storage"]
+
+  postgres:
+    profiles: ["production"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aidoctor
+      POSTGRES_PASSWORD: aidoctor
+      POSTGRES_DB: aidoctor
+    ports: ["5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aidoctor"]
+      interval: 10s
+      retries: 5
+
+volumes:
+  aidoctor-data:
+  qdrant-data:
+  postgres-data:

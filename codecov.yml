@@ -1,0 +1,19 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 90%
+        threshold: 2%
+    patch:
+      default:
+        target: 85%
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+
+ignore:
+  # Paths that require a network call or a model download, and so cannot be
+  # covered in CI. They are marked as unverified in the README status table
+  # rather than quietly counted as covered.
+  - "src/aidoctor/llms/base.py::OpenAIChatLLM"
