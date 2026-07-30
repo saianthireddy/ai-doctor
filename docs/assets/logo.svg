@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="AI Doctor">
+  <rect width="512" height="512" rx="112" fill="#0F172A"/>
+
+  <!-- document -->
+  <g transform="rotate(-5 256 256)">
+    <path d="M132 104 h150 l58 58 v246 a18 18 0 0 1 -18 18 H132 a18 18 0 0 1 -18 -18 V122 a18 18 0 0 1 18 -18 z" fill="#F8FAFC"/>
+    <path d="M282 104 l58 58 h-42 a16 16 0 0 1 -16 -16 z" fill="#CBD5E1"/>
+
+    <rect x="148" y="196" width="150" height="14" rx="7" fill="#CBD5E1"/>
+    <rect x="148" y="232" width="112" height="14" rx="7" fill="#CBD5E1"/>
+    <!-- the cited line -->
+    <rect x="148" y="268" width="150" height="14" rx="7" fill="#2DD4BF"/>
+    <rect x="148" y="304" width="86"  height="14" rx="7" fill="#CBD5E1"/>
+  </g>
+
+  <!-- stethoscope: tubing sweeps in from the top right, clear of the text -->
+  <path d="M300 112 C 404 132, 424 268, 360 330"
+        fill="none" stroke="#2DD4BF" stroke-width="22" stroke-linecap="round"/>
+  <circle cx="300" cy="112" r="18" fill="#5EEAD4"/>
+
+  <!-- chest piece -->
+  <circle cx="348" cy="372" r="58" fill="#2DD4BF"/>
+  <circle cx="348" cy="372" r="28" fill="#0F172A"/>
+</svg>
