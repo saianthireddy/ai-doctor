@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a capability
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the situation, not the solution.
+    validations: { required: true }
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+  - type: textarea
+    id: testing
+    attributes:
+      label: How would this be tested?
+      description: |
+        This project does not mark a capability as implemented until a test
+        proves it. If the feature needs an external service, how could it be
+        verified in CI?
+    validations: { required: true }
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I have read the README status table and ROADMAP
+          required: true

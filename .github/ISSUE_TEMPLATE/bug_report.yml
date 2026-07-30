@@ -1,0 +1,52 @@
+name: Bug report
+description: Something behaves incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A failing test is the most useful bug report there is. If you can express
+        the problem as one, please paste it.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did you observe, and what did you expect instead?
+    validations: { required: true }
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Minimal steps, or a failing test.
+      render: python
+    validations: { required: true }
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Extraction (PDF/DOCX/PPTX/XLSX/HTML)
+        - Chunking
+        - Embeddings
+        - Vector store
+        - Retrieval / reranking
+        - Answering / refusal
+        - API
+        - Docker / CI
+        - Other
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations: { required: true }
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12.3"
+  - type: textarea
+    id: config
+    attributes:
+      label: Relevant configuration
+      description: Which backends? (VECTOR_BACKEND, EMBEDDER, RERANKER, LLM)
