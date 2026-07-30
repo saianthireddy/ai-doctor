@@ -38,7 +38,7 @@ status table in the README for what is deliberately *not* claimed.
 - **FastAPI** REST API with OpenAPI docs and meaningful status codes.
 - **SQLAlchemy** metadata store (SQLite by default, any URL supported).
 - Multi-stage non-root **Docker** image, Compose stack, Makefile.
-- 114 tests at 93% coverage; CI on Python 3.11 and 3.12 including a boot smoke
+- 116 tests at 94% coverage; CI on Python 3.11 and 3.12 including a boot smoke
   test and a Docker run check.
 
 ### Fixed during development
@@ -52,6 +52,16 @@ Found by the tests in this release rather than shipped and patched later:
 - SQLite `:memory:` needed `StaticPool`; without it every connection saw an
   empty database.
 - Qdrant accepted a zero query vector where the reference store refused it.
+- A `coverage` `omit` and a Codecov `ignore` entry both used `file:Symbol`
+  syntax. Both take path globs, so the lines did nothing while appearing
+  deliberate; the network-dependent classes are excluded with
+  `# pragma: no cover` instead, which works.
+- `build_llm` and `build_reranker` had no test for an unknown backend name,
+  surfaced by an unreached `raise` in the coverage report.
+- The documented Postgres path could not work: SQLAlchemy ships no driver and
+  none was declared, so a `postgresql://` URL failed at import with
+  `ModuleNotFoundError: No module named 'psycopg'`. Added a `[postgres]` extra
+  so the path is installable, and said so in the README and deployment docs.
 
 [Unreleased]: https://github.com/saianthireddy/ai-doctor/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/saianthireddy/ai-doctor/releases/tag/v0.1.0

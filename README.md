@@ -5,8 +5,8 @@
 [![CI](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml)
 [![Docker](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://github.com/saianthireddy/ai-doctor)
-[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](#testing)
-[![Tests](https://img.shields.io/badge/tests-114-brightgreen)](#testing)
+[![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-116-brightgreen)](#testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -60,7 +60,7 @@ because a claim you can't check is worth less than a smaller one you can.
 |---|---|---|
 | PDF / DOCX / PPTX / XLSX / HTML / Markdown extraction | ✅ **Implemented** | 14 tests against real generated files |
 | Section-aware chunking with overlap | ✅ **Implemented** | 12 tests |
-| Hashing embeddings (offline) | ✅ **Implemented** | 10 tests |
+| Hashing embeddings (offline) | ✅ **Implemented** | 12 tests |
 | Qdrant vector store (embedded mode) | ✅ **Implemented** | 11 tests, incl. parity vs exact search |
 | In-memory vector store (exact cosine) | ✅ **Implemented** | same contract suite |
 | BM25 lexical search with stemming | ✅ **Implemented** | 6 tests |
@@ -74,7 +74,7 @@ because a claim you can't check is worth less than a smaller one you can.
 | Docker image (multi-stage, non-root) | ✅ **Implemented** | built **and booted** in CI |
 | OpenAI embeddings + chat generation | 🟡 **Written, unverified** | needs an API key; not exercised in CI |
 | Cross-encoder reranking | 🟡 **Written, unverified** | needs a model download |
-| Postgres backend | 🟡 **Declared** | Compose service; SQLite is what CI runs |
+| Postgres backend | 🟡 **Declared** | Compose service + `[postgres]` extra; SQLite is what CI runs |
 | Qdrant *server* mode | 🟡 **Declared** | Compose service; embedded is what CI runs |
 | Knowledge graph, Celery workers, K8s, Terraform | ❌ **Not built** | see [ROADMAP.md](ROADMAP.md) |
 
@@ -93,7 +93,7 @@ cd ai-doctor
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-make test        # 114 tests, no network, no API key
+make test        # 116 tests, no network, no API key
 make demo        # ingest the sample corpus and ask it questions
 make run         # serve on http://localhost:8000  (docs at /docs)
 ```
@@ -206,7 +206,7 @@ via environment variable when you want real quality. The reranker is named
 make cov
 ```
 
-**114 tests, 93% coverage, ~2s, no network.**
+**116 tests, 94% coverage, ~2s, no network.**
 
 | Suite | Focus |
 |---|---|
@@ -241,6 +241,8 @@ comment.
 | `dimensions or 384` | Explicit `0` silently became `384` |
 | SQLite `:memory:` without `StaticPool` | `no such table: documents` — every connection got a fresh DB |
 | Qdrant accepted a zero query vector | Returned arbitrary results where the reference store returned none |
+| A `coverage`/`codecov` exclusion used `file:Symbol` syntax | Both take *path* globs, so the line silently did nothing while looking deliberate |
+| Two of four factory guards were untested | `build_llm` and `build_reranker` never had their "unknown name" path exercised |
 
 ---
 
@@ -275,7 +277,7 @@ Everything is optional — see [.env.example](.env.example).
 | `EMBEDDER` | `hashing` | `hashing` (offline) or `openai` |
 | `RERANKER` | `lexical-overlap` | `none`, `lexical-overlap`, `cross-encoder` |
 | `LLM` | `extractive` | `extractive` (offline) or `openai` |
-| `DATABASE_URL` | `sqlite:///./data/aidoctor.db` | Any SQLAlchemy URL |
+| `DATABASE_URL` | `sqlite:///./data/aidoctor.db` | Any SQLAlchemy URL. Postgres needs `pip install -e ".[postgres]"` for the driver |
 | `MIN_RELEVANCE` | `0.12` | Below this, answers are refused |
 
 ---

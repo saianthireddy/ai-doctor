@@ -12,8 +12,7 @@ comment:
   layout: "reach, diff, flags, files"
   behavior: default
 
-ignore:
-  # Paths that require a network call or a model download, and so cannot be
-  # covered in CI. They are marked as unverified in the README status table
-  # rather than quietly counted as covered.
-  - "src/aidoctor/llms/base.py::OpenAIChatLLM"
+# No `ignore` list. Codecov ignores *paths*, not symbols, so a "file::Class"
+# entry would be a no-op. The classes that need a network call or a model
+# download are excluded at the source with `# pragma: no cover`, and are listed
+# as unverified in the README status table rather than hidden from the metric.
