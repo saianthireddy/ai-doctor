@@ -6,9 +6,46 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-Nothing yet. See [ROADMAP.md](ROADMAP.md) for what is planned.
+### Added
 
-## [0.1.0] — 2026-07-30
+- **A labelled evaluation set and harness** (`examples/evaluation/questions.json`,
+  `src/aidoctor/evaluation/`, `scripts/evaluate.py`). 52 questions — 46
+  answerable, 6 unanswerable — scored for Precision@k, Recall@k, MRR, nDCG@10,
+  and a false-answer rate on the unanswerable ones.
+- **A corpus generator** (`scripts/make_corpus.py`) that builds the sample corpus
+  from reviewable text rather than committed binaries, with distractors,
+  near-miss sections and sibling error codes designed in.
+- Ablations across dense-only, lexical-only, hybrid and hybrid+rerank, published
+  in [docs/evaluation.md](docs/evaluation.md) whichever way they land.
+- `guard_index_size()`, which refuses to report scores when the index is not
+  larger than the ranking depth.
+
+### Fixed
+
+- Selecting the cross-encoder reranker without `sentence-transformers` installed now fails at construction with the command that fixes it, instead of raising a bare `ModuleNotFoundError` on the first query — after startup had already reported healthy. Every other optional dependency already failed loudly at its boundary; this one did not.
+
+### Changed
+
+- **Sample corpus expanded from 8 chunks to 67** across 12 documents in 6
+  formats. At 8 chunks against a `candidate_k` of 12 every query returned the
+  whole index, so Recall@k was 1.00 by arithmetic — a benchmark that could not
+  fail, and therefore could not detect a regression either.
+- **`MIN_RELEVANCE` default raised from 0.12 to 0.15.** Chosen from the
+  threshold sweep rather than by inspection: it cuts the false-answer rate from
+  0.500 to 0.333 and wrongly refuses nothing that 0.12 answered.
+
+### Measured
+
+- Best configuration (hybrid + rerank): P@1 0.674, R@10 0.844, MRR 0.748,
+  nDCG@10 0.752.
+- **Hybrid retrieval does not beat BM25 alone on this corpus** (MRR 0.650 vs
+  0.669). Published rather than buried; the offline hashing embedder is the
+  likely cause and the prediction is recorded for when real embeddings land.
+- **The refusal gate answers 33% of unanswerable questions**, including
+  "what is the parental leave policy" at confidence 0.56.
+
+
+## [0.1.0] — 2026-07-29
 
 First release. Everything below is implemented and covered by tests; see the
 status table in the README for what is deliberately *not* claimed.

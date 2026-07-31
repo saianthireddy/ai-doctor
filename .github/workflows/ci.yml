@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12", cache: pip }
       - run: pip install ruff
-      - run: ruff check src tests
+      - run: ruff check src tests scripts
       - run: ruff format --check src tests
 
   test:
@@ -65,3 +65,21 @@ jobs:
           done
           curl -sf http://127.0.0.1:8000/api/v1/health | tee /dev/stderr | grep -q '"status":"ok"'
           curl -sf http://127.0.0.1:8000/openapi.json > /dev/null
+
+  evaluate:
+    # The README and docs/evaluation.md publish specific numbers. This job
+    # regenerates them from a clean checkout and fails if they have drifted, so
+    # the published figures cannot quietly become untrue.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e ".[dev]"
+      - name: Score the labelled set
+        run: python scripts/evaluate.py | tee eval.txt
+      - name: The published numbers must still hold
+        run: |
+          grep -q '| hybrid + rerank | 0.674 | 0.209 | 0.801 | 0.844 | 0.748 | 0.752 |' eval.txt
+          grep -q '| router (end to end) | 0.333 | 0.000 |' eval.txt
+          grep -q 'corpus:    67 chunks' eval.txt

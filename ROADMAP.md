@@ -11,17 +11,22 @@ Nothing moves to ✅ in the status table until a test proves it. A capability th
 cannot be tested in CI gets marked 🟡 and stays there. That rule is why this
 roadmap is shorter than the feature list of a comparable project.
 
-## 0.2.0 — measurement
+## 0.2.0 — measurement *(done, unreleased)*
 
-The most valuable missing thing is not a feature, it is a number.
+The most valuable missing thing was not a feature, it was a number.
+Results: **[docs/evaluation.md](docs/evaluation.md)**.
 
-- [ ] **A labelled evaluation set.** ~50 question/passage pairs over the sample
+A prerequisite this roadmap originally missed: the corpus was too small to
+measure anything. 8 chunks against a `candidate_k` of 12 meant every query
+returned the whole index. It was expanded to 67 chunks first.
+
+- [x] **A labelled evaluation set.** ~50 question/passage pairs over the sample
       corpus, including paraphrases and deliberately unanswerable questions.
-- [ ] **Retrieval metrics** — Precision@1, Recall@k, MRR, nDCG — with the harness
+- [x] **Retrieval metrics** — Precision@1, Recall@k, MRR, nDCG — with the harness
       published so the numbers are reproducible from a clean clone.
-- [ ] **A refusal metric.** False-answer rate on unanswerable questions is the
+- [x] **A refusal metric.** False-answer rate on unanswerable questions is the
       number this project should be judged on, and it does not exist yet.
-- [ ] Ablations: dense only vs lexical only vs hybrid, reranker on vs off. Any of
+- [x] Ablations: dense only vs lexical only vs hybrid, reranker on vs off. Any of
       these could show a component is not earning its place.
 
 ## 0.3.0 — verifying the 🟡 rows
