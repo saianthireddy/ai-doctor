@@ -104,7 +104,9 @@ jobs:
           --health-timeout 5s
           --health-retries 10
       qdrant:
-        image: qdrant/qdrant:v1.9.0
+        # Match the client's major/minor; qdrant-client warns and may
+        # behave differently across a version gap.
+        image: qdrant/qdrant:v1.18.0
         ports: ["6333:6333"]
     env:
       POSTGRES_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/aidoctor
@@ -148,6 +150,17 @@ jobs:
               qdrant_collection="e2e",
               embedding_dimensions=384,
           ))
+
+          # Postgres persists across steps, so the contract suite's rows are
+          # still here. SQLite tests never saw this because each one gets a
+          # fresh tmp_path file. Start clean, and exercise the delete path on
+          # Postgres while doing it.
+          leftover = container.store.list_documents()
+          for record in leftover:
+              container.store.delete(record.doc_id)
+          print(f"cleared {len(leftover)} row(s) left by the contract suite")
+          assert container.store.stats() == {"documents": 0, "chunks": 0}
+
           for path in sorted(Path("examples/corpus").iterdir()):
               if path.is_file():
                   container.ingest.ingest_path(path)
