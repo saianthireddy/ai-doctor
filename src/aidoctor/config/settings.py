@@ -56,7 +56,12 @@ class Settings:
     chunk_overlap_chars: int = field(default_factory=lambda: _int("CHUNK_OVERLAP_CHARS", 150))
     candidate_k: int = field(default_factory=lambda: _int("CANDIDATE_K", 12))
     context_k: int = field(default_factory=lambda: _int("CONTEXT_K", 4))
-    min_relevance: float = field(default_factory=lambda: _float("MIN_RELEVANCE", 0.12))
+    # 0.15 rather than the original 0.12, chosen from the threshold sweep in
+    # docs/evaluation.md. On the labelled set 0.12 answered 50% of unanswerable
+    # questions; 0.15 answers 33% and wrongly refuses *nothing* that 0.12
+    # answered, so the change costs no recall. Going further does cost: 0.25
+    # reaches 17% false answers but wrongly refuses 20% of answerable ones.
+    min_relevance: float = field(default_factory=lambda: _float("MIN_RELEVANCE", 0.15))
 
     max_upload_mb: int = field(default_factory=lambda: _int("MAX_UPLOAD_MB", 25))
     enable_metrics: bool = field(default_factory=lambda: _bool("ENABLE_METRICS", True))
