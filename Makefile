@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 PY := python
 
-.PHONY: help install dev test cov lint fmt run docker docker-run demo clean
+.PHONY: help install dev test cov lint fmt run docker docker-run demo eval corpus clean
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}'
@@ -19,16 +19,22 @@ cov: ## Run tests with a coverage report
 	pytest --cov=src/aidoctor --cov-report=term-missing
 
 lint: ## Lint
-	ruff check src tests
+	ruff check src tests scripts
 
 fmt: ## Format
-	ruff format src tests && ruff check --fix src tests
+	ruff format src tests scripts && ruff check --fix src tests scripts
 
 run: ## Serve on :8000
 	uvicorn aidoctor.main:app --reload --port 8000
 
 demo: ## Ingest the sample corpus and ask a question
 	$(PY) scripts/demo.py
+
+eval: ## Score retrieval on the labelled set and print the published tables
+	$(PY) scripts/evaluate.py
+
+corpus: ## Regenerate the sample corpus from scripts/make_corpus.py
+	$(PY) scripts/make_corpus.py
 
 docker: ## Build the image
 	docker build -t ai-doctor:local .

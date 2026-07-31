@@ -1,16 +1,12 @@
-<p align="center">
-  <img src="docs/assets/hero.png" alt="AI Doctor" width="820">
-</p>
-
-# AI Doctor
+# 🩺 AI Doctor
 
 **Document intelligence that cites its sources — or admits it doesn't know.**
 
 [![CI](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml)
 [![Docker](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://github.com/saianthireddy/ai-doctor)
-[![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)](#testing)
-[![Tests](https://img.shields.io/badge/tests-116-brightgreen)](#testing)
+[![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-140-brightgreen)](#testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -71,7 +67,8 @@ because a claim you can't check is worth less than a smaller one you can.
 | Hybrid retrieval via Reciprocal Rank Fusion | ✅ **Implemented** | 10 tests |
 | Reranking (term coverage + phrase) | ✅ **Implemented** | 5 tests |
 | Grounded answers with citations | ✅ **Implemented** | 7 tests |
-| **Refusal when out-of-corpus** | ✅ **Implemented** | 6 tests |
+| **Refusal when out-of-corpus** | ✅ **Implemented** | 6 tests; **measured: answers 33% of unanswerable questions** — see [evaluation](docs/evaluation.md#refusal) |
+| Labelled retrieval evaluation | ✅ **Implemented** | 52 questions, 24 tests, [published numbers](docs/evaluation.md) |
 | Intent router over 4 handlers | ✅ **Implemented** | 6 tests |
 | FastAPI REST API + OpenAPI | ✅ **Implemented** | 18 tests |
 | SQLAlchemy metadata store | ✅ **Implemented** | covered via API tests |
@@ -88,6 +85,40 @@ proves it works** — because this environment can't reach the service it needs.
 
 ---
 
+## Measured, not asserted
+
+52 labelled questions over the sample corpus — 46 answerable, 6 that the corpus
+cannot answer. Reproduce with `python scripts/evaluate.py`.
+
+| Strategy | P@1 | R@10 | MRR | nDCG@10 |
+|---|---:|---:|---:|---:|
+| dense only | 0.522 | 0.790 | 0.616 | 0.641 |
+| lexical only (BM25) | 0.543 | 0.833 | 0.669 | 0.686 |
+| hybrid (RRF) | 0.543 | 0.822 | 0.650 | 0.676 |
+| **hybrid + rerank** | **0.674** | **0.844** | **0.748** | **0.752** |
+
+Two results worth stating plainly, because neither flatters the design:
+
+**Hybrid retrieval does not beat BM25 alone on this corpus.** Fusion is a hair
+*worse* than lexical by itself. The likely cause is the offline hashing
+embedder, which is semantically blind by construction — RRF is fusing a weak
+list into a decent one. If hybrid still loses once real embeddings are wired in,
+the fusion isn't earning its place and should go.
+
+**The refusal gate answers 33% of unanswerable questions.** It catches the
+absurd ones and misses the plausible ones: *"what is the parental leave policy"*
+gets answered, confidently, from the handbook's **annual** leave section. The
+relevance floor moved from 0.12 to 0.15 because the sweep showed that cuts false
+answers by a third while wrongly refusing nothing — but the remaining failures
+are semantic near-misses a lexical floor cannot catch.
+
+The benchmark is built so it can fail: a saboteur retriever that ignores the
+query is scored alongside the real one in CI, and the suite fails if they
+converge. Full method, threshold sweep and limitations in
+**[docs/evaluation.md](docs/evaluation.md)**.
+
+---
+
 ## Quickstart
 
 ```bash
@@ -97,7 +128,7 @@ cd ai-doctor
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-make test        # 116 tests, no network, no API key
+make test        # 140 tests, no network, no API key
 make demo        # ingest the sample corpus and ask it questions
 make run         # serve on http://localhost:8000  (docs at /docs)
 ```
@@ -210,7 +241,7 @@ via environment variable when you want real quality. The reranker is named
 make cov
 ```
 
-**116 tests, 94% coverage, ~2s, no network.**
+**140 tests, 93% coverage, ~3s, no network.**
 
 | Suite | Focus |
 |---|---|
