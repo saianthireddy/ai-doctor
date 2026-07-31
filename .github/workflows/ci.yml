@@ -83,3 +83,84 @@ jobs:
           grep -q '| hybrid + rerank | 0.674 | 0.209 | 0.801 | 0.844 | 0.748 | 0.752 |' eval.txt
           grep -q '| router (end to end) | 0.333 | 0.000 |' eval.txt
           grep -q 'corpus:    67 chunks' eval.txt
+
+  integration:
+    # A 🟡 "Declared" row becomes ✅ only when something proves it. The main
+    # suite runs SQLite and *embedded* Qdrant; this job starts a real Postgres
+    # and a real Qdrant server and puts them through the identical contract
+    # suites, so the two backends are held to the same assertions rather than
+    # to a promise.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aidoctor
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      qdrant:
+        image: qdrant/qdrant:v1.9.0
+        ports: ["6333:6333"]
+    env:
+      POSTGRES_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/aidoctor
+      QDRANT_URL: http://127.0.0.1:6333
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -e ".[dev,postgres]"
+      - name: Wait for Qdrant
+        run: |
+          for _ in $(seq 1 30); do
+            curl -sf "$QDRANT_URL/readyz" && break
+            sleep 2
+          done
+          curl -sf "$QDRANT_URL/readyz"
+      - name: Contract suites against the real services
+        run: pytest tests/database tests/vectorstore -q -rs | tee integration.txt
+      - name: The service-backed cases must have run, not skipped
+        # A skipped test passes. Without this the job would go green while
+        # proving nothing, which is the failure this whole exercise exists to
+        # avoid: green is not the same as verified.
+        run: |
+          if grep -q "skipped" integration.txt; then
+            echo "::error::Postgres or Qdrant cases skipped - the services were not reachable."
+            grep "SKIPPED" integration.txt || true
+            exit 1
+          fi
+      - name: End to end on real services
+        run: |
+          python - <<'EOF'
+          import os
+          from pathlib import Path
+          from aidoctor.api.dependencies import build_container
+          from aidoctor.config.settings import Settings
+
+          container = build_container(Settings(
+              database_url=os.environ["POSTGRES_URL"],
+              qdrant_url=os.environ["QDRANT_URL"],
+              vector_backend="qdrant",
+              qdrant_collection="e2e",
+              embedding_dimensions=384,
+          ))
+          for path in sorted(Path("examples/corpus").iterdir()):
+              if path.is_file():
+                  container.ingest.ingest_path(path)
+          stats = container.stats
+          print("stats:", stats)
+          assert stats["documents"] == 12, stats
+          assert stats["indexed_chunks"] == 67, stats
+
+          answered = container.router.route("how do I reset my password")
+          print("answer:", answered.text[:80], answered.citations)
+          assert not answered.escalated and answered.citations
+
+          refused = container.router.route("who won the 1998 world cup")
+          assert refused.escalated, refused.text
+          print("refused correctly")
+          EOF
