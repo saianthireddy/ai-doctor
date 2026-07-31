@@ -20,6 +20,10 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `guard_index_size()`, which refuses to report scores when the index is not
   larger than the ranking depth.
 
+### Fixed
+
+- Selecting the cross-encoder reranker without `sentence-transformers` installed now fails at construction with the command that fixes it, instead of raising a bare `ModuleNotFoundError` on the first query — after startup had already reported healthy. Every other optional dependency already failed loudly at its boundary; this one did not.
+
 ### Changed
 
 - **Sample corpus expanded from 8 chunks to 67** across 12 documents in 6

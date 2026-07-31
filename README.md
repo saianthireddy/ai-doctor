@@ -1,4 +1,8 @@
-# 🩺 AI Doctor
+<p align="center">
+  <img src="docs/assets/hero.png" alt="AI Doctor" width="820">
+</p>
+
+# AI Doctor
 
 **Document intelligence that cites its sources — or admits it doesn't know.**
 
@@ -74,7 +78,7 @@ because a claim you can't check is worth less than a smaller one you can.
 | SQLAlchemy metadata store | ✅ **Implemented** | covered via API tests |
 | Docker image (multi-stage, non-root) | ✅ **Implemented** | built **and booted** in CI |
 | OpenAI embeddings + chat generation | 🟡 **Written, unverified** | needs an API key; not exercised in CI |
-| Cross-encoder reranking | 🟡 **Written, unverified** | needs a model download |
+| Cross-encoder reranking | 🟡 **Written, unverified** | needs the `[rerank]` extra, then a model download |
 | Postgres backend | 🟡 **Declared** | Compose service + `[postgres]` extra; SQLite is what CI runs |
 | Qdrant *server* mode | 🟡 **Declared** | Compose service; embedded is what CI runs |
 | Knowledge graph, Celery workers, K8s, Terraform | ❌ **Not built** | see [ROADMAP.md](ROADMAP.md) |
