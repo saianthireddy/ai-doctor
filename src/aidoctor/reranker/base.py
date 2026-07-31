@@ -146,16 +146,37 @@ class LexicalOverlapReranker:
         return rescored[:limit]
 
 
-class CrossEncoderReranker:  # pragma: no cover - requires model download
-    """Real cross-encoder. Needs sentence-transformers and a model on disk."""
+class RerankerUnavailable(RuntimeError):
+    """The selected reranker cannot run in this environment."""
+
+
+class CrossEncoderReranker:
+    """Real cross-encoder. Needs sentence-transformers and a model on disk.
+
+    The import is deliberately lazy so the package stays installable without a
+    ~2GB torch dependency. The cost of laziness is that a missing dependency
+    would otherwise surface on the first *query* rather than at startup, as a
+    bare ``ModuleNotFoundError`` from inside a reranking call — which is a
+    confusing place to learn that an extra was never installed. So the check is
+    hoisted into ``__init__``: choosing this backend fails immediately, with the
+    command that fixes it.
+    """
 
     name = "cross-encoder"
 
     def __init__(self, model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2") -> None:
+        try:
+            import sentence_transformers  # noqa: F401
+        except ImportError as exc:
+            raise RerankerUnavailable(
+                "The cross-encoder reranker requires sentence-transformers. "
+                'Install it with: pip install "ai-doctor[rerank]" '
+                "(the model itself downloads on first use)."
+            ) from exc
         self.model_name = model
         self._model = None
 
-    def _load(self):
+    def _load(self):  # pragma: no cover - requires model download
         if self._model is None:
             from sentence_transformers import CrossEncoder
 
