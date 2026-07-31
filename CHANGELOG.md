@@ -8,6 +8,20 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Postgres and Qdrant *server* mode moved from 🟡 Declared to ✅ Implemented**,
+  exercised in CI against real
+  service containers, running the same contract suites the embedded backends
+  already pass. A CI guard fails the job if those cases skip, because a
+  skipped test passes and green is not the same as verified.
+- First direct tests for `MetadataStore` (it was previously only covered
+  through the API), including that `SUM` over an empty table comes back as 0
+  rather than NULL on both engines.
+- A real Postgres caught state leaking between CI steps that SQLite never
+  could: every SQLite test gets a fresh `tmp_path` file, so the end-to-end
+  step had been inheriting the contract suite's rows (13 documents, not 12).
+
+### Added
+
 - **A labelled evaluation set and harness** (`examples/evaluation/questions.json`,
   `src/aidoctor/evaluation/`, `scripts/evaluate.py`). 52 questions — 46
   answerable, 6 unanswerable — scored for Precision@k, Recall@k, MRR, nDCG@10,

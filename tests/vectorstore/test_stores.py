@@ -8,6 +8,9 @@ than aspirational.
 
 from __future__ import annotations
 
+import os
+import uuid
+
 import numpy as np
 import pytest
 
@@ -33,8 +36,25 @@ def _records(embedder) -> list[VectorRecord]:
     ]
 
 
-@pytest.fixture(params=["memory", "qdrant"])
+@pytest.fixture(params=["memory", "qdrant", "qdrant-server"])
 def store(request):
+    """Every backend faces the identical contract below.
+
+    ``qdrant-server`` is the same class talking to a real Qdrant over HTTP
+    instead of an embedded instance. It is skipped unless ``QDRANT_URL`` is set,
+    so local runs stay offline and CI — which starts a Qdrant service container
+    — is what actually proves server mode works. Until this existed, server mode
+    was marked "Declared" in the README because nothing exercised it.
+    """
+    if request.param == "qdrant-server":
+        url = os.environ.get("QDRANT_URL")
+        if not url:
+            pytest.skip("QDRANT_URL not set; server mode is exercised in CI")
+        # A fresh collection per test: a real server persists between tests,
+        # and leftover points from a previous case would make counts lie.
+        return build_vector_store(
+            "qdrant", dimensions=DIMS, collection=f"contract-{uuid.uuid4().hex[:8]}", url=url
+        )
     return build_vector_store(request.param, dimensions=DIMS, collection="contract")
 
 
