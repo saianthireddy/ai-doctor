@@ -1,0 +1,274 @@
+{
+  "description": "Labelled retrieval set for examples/corpus. 'relevant' lists section keys of the form '<filename>#<section label>'. An empty list means the corpus cannot answer the question and the system is expected to refuse.",
+  "questions": [
+    {
+      "id": "q01",
+      "question": "how do I reset my password",
+      "relevant": ["handbook.docx#Password reset"],
+      "note": "security-policy.docx has two password sections that must not outrank this"
+    },
+    {
+      "id": "q02",
+      "question": "I forgot my password, how do I get back in",
+      "relevant": ["handbook.docx#Password reset", "support-faq.md#I cannot sign in"],
+      "note": "paraphrase, no literal 'reset'"
+    },
+    {
+      "id": "q03",
+      "question": "how long does a password have to be",
+      "relevant": ["security-policy.docx#Password requirements"]
+    },
+    {
+      "id": "q04",
+      "question": "do I have to change my password every ninety days",
+      "relevant": ["security-policy.docx#Password rotation"]
+    },
+    {
+      "id": "q05",
+      "question": "what does ERR_LOCK_TIMEOUT mean",
+      "relevant": ["api-errors.html#ERR_LOCK_TIMEOUT", "handbook.docx#Troubleshooting"]
+    },
+    {
+      "id": "q06",
+      "question": "two workers grabbed the same job",
+      "relevant": ["api-errors.html#ERR_LOCK_CONFLICT"],
+      "note": "must not collapse onto the sibling ERR_LOCK_TIMEOUT"
+    },
+    {
+      "id": "q07",
+      "question": "the queue rejected a new job",
+      "relevant": ["api-errors.html#ERR_QUEUE_FULL"]
+    },
+    {
+      "id": "q08",
+      "question": "how do I fix a saturated work queue",
+      "relevant": ["runbook.md#Restart the worker pool", "handbook.docx#Troubleshooting", "api-errors.html#ERR_LOCK_TIMEOUT"]
+    },
+    {
+      "id": "q09",
+      "question": "when should I add more workers",
+      "relevant": ["runbook.md#Scaling the pool"]
+    },
+    {
+      "id": "q10",
+      "question": "how do I undo a bad deployment",
+      "relevant": ["runbook.md#Rollback"],
+      "note": "paraphrase of rollback"
+    },
+    {
+      "id": "q11",
+      "question": "does rolling back undo database migrations",
+      "relevant": ["runbook.md#Rollback"]
+    },
+    {
+      "id": "q12",
+      "question": "where are the worker logs",
+      "relevant": ["runbook.md#Log locations"]
+    },
+    {
+      "id": "q13",
+      "question": "how long are logs kept",
+      "relevant": ["runbook.md#Log locations", "glossary.md#Retention"]
+    },
+    {
+      "id": "q14",
+      "question": "how am I charged for seats",
+      "relevant": ["handbook.docx#Billing", "pricing.xlsx#sheet Tiers"]
+    },
+    {
+      "id": "q15",
+      "question": "what is the price per seat for a team of thirty",
+      "relevant": ["pricing.xlsx#sheet Tiers"]
+    },
+    {
+      "id": "q16",
+      "question": "is there a discount for buying a lot of seats",
+      "relevant": ["handbook.docx#Billing", "pricing.xlsx#sheet Tiers"]
+    },
+    {
+      "id": "q17",
+      "question": "how much does priority support cost",
+      "relevant": ["pricing.xlsx#sheet Addons"]
+    },
+    {
+      "id": "q18",
+      "question": "why did my invoice change mid month",
+      "relevant": ["support-faq.md#Why did my invoice change", "glossary.md#Pro-rating"]
+    },
+    {
+      "id": "q19",
+      "question": "what does pro-rating mean",
+      "relevant": ["glossary.md#Pro-rating"]
+    },
+    {
+      "id": "q20",
+      "question": "where can I download my invoices",
+      "relevant": ["support-faq.md#Where do I download invoices"]
+    },
+    {
+      "id": "q21",
+      "question": "can I transfer a licence to a colleague",
+      "relevant": ["support-faq.md#Can I move a licence to another person", "licence.pdf#page 2", "licence.pdf#page 1"]
+    },
+    {
+      "id": "q22",
+      "question": "can two people share one licence at the same time",
+      "relevant": ["licence.pdf#page 2"]
+    },
+    {
+      "id": "q23",
+      "question": "how often can you audit our seat count",
+      "relevant": ["licence.pdf#page 3"]
+    },
+    {
+      "id": "q24",
+      "question": "what happens if we stop paying",
+      "relevant": ["licence.pdf#page 4"],
+      "note": "termination for non-payment; 'suspended' also appears in support-faq and api-errors"
+    },
+    {
+      "id": "q25",
+      "question": "what is a seat",
+      "relevant": ["glossary.md#Seat"]
+    },
+    {
+      "id": "q26",
+      "question": "what is the difference between a lock and a queue",
+      "relevant": ["glossary.md#Lock", "glossary.md#Work queue"]
+    },
+    {
+      "id": "q27",
+      "question": "how do I give a new colleague access",
+      "relevant": ["support-faq.md#How do I add a teammate", "onboarding.pptx#slide 3"]
+    },
+    {
+      "id": "q28",
+      "question": "is there a free trial",
+      "relevant": ["support-faq.md#Do you offer a trial"]
+    },
+    {
+      "id": "q29",
+      "question": "who do I tell about a security problem",
+      "relevant": ["support-faq.md#Who do I contact about a security issue", "security-policy.docx#Reporting a vulnerability"]
+    },
+    {
+      "id": "q30",
+      "question": "how quickly will a vulnerability report be acknowledged",
+      "relevant": ["security-policy.docx#Reporting a vulnerability"]
+    },
+    {
+      "id": "q31",
+      "question": "is two factor authentication required",
+      "relevant": ["security-policy.docx#Multi-factor authentication"]
+    },
+    {
+      "id": "q32",
+      "question": "how often are access permissions reviewed",
+      "relevant": ["security-policy.docx#Access reviews"]
+    },
+    {
+      "id": "q33",
+      "question": "what happens to our documents after we leave",
+      "relevant": ["security-policy.docx#Data retention"]
+    },
+    {
+      "id": "q34",
+      "question": "the app got slow right after we deployed",
+      "relevant": ["support-faq.md#The app is slow after deployment"]
+    },
+    {
+      "id": "q35",
+      "question": "what caused the March incident",
+      "relevant": ["postmortem.md#Root cause", "postmortem.md#Summary"]
+    },
+    {
+      "id": "q36",
+      "question": "how many jobs failed during the outage",
+      "relevant": ["postmortem.md#Impact"]
+    },
+    {
+      "id": "q37",
+      "question": "what did we change after the incident",
+      "relevant": ["postmortem.md#Follow-up actions", "postmortem.md#Resolution"]
+    },
+    {
+      "id": "q38",
+      "question": "what is in version 4.2",
+      "relevant": ["release-notes.md#Version 4.2"]
+    },
+    {
+      "id": "q39",
+      "question": "what do I need to do to upgrade from 3.x",
+      "relevant": ["release-notes.md#Upgrade notes"]
+    },
+    {
+      "id": "q40",
+      "question": "is the legacy licence key file still supported",
+      "relevant": ["release-notes.md#Deprecations", "release-notes.md#Version 4.0"]
+    },
+    {
+      "id": "q41",
+      "question": "how much annual leave do I get",
+      "relevant": ["handbook.docx#Leave policy"]
+    },
+    {
+      "id": "q42",
+      "question": "how long do I have to submit an expense claim",
+      "relevant": ["handbook.docx#Expenses"]
+    },
+    {
+      "id": "q43",
+      "question": "when do I get a new laptop",
+      "relevant": ["handbook.docx#Equipment"]
+    },
+    {
+      "id": "q44",
+      "question": "what are the core working hours",
+      "relevant": ["handbook.docx#Working hours"]
+    },
+    {
+      "id": "q45",
+      "question": "how long is probation",
+      "relevant": ["handbook.docx#Probation"]
+    },
+    {
+      "id": "q46",
+      "question": "what sales did we do in EMEA",
+      "relevant": ["sales.xlsx#sheet Sales"]
+    },
+    {
+      "id": "q47",
+      "question": "who won the 1998 world cup",
+      "relevant": []
+    },
+    {
+      "id": "q48",
+      "question": "what is the airspeed velocity of an unladen swallow",
+      "relevant": []
+    },
+    {
+      "id": "q49",
+      "question": "what is our quarterly revenue forecast for next year",
+      "relevant": [],
+      "note": "plausible business question, deliberately absent; 'revenue' and 'quarter' both appear in the corpus"
+    },
+    {
+      "id": "q50",
+      "question": "which cloud provider do we host on",
+      "relevant": [],
+      "note": "infrastructure vocabulary is all over the runbook, but this fact is not in the corpus"
+    },
+    {
+      "id": "q51",
+      "question": "what is the parental leave policy",
+      "relevant": [],
+      "note": "handbook has a leave section, but not this; near-miss on purpose"
+    },
+    {
+      "id": "q52",
+      "question": "how do I export my data to CSV",
+      "relevant": [],
+      "note": "release notes mention an export, but not a CSV data export"
+    }
+  ]
+}
