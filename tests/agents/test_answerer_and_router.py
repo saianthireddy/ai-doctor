@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import pytest
+
 from aidoctor.agents.router import ANSWER, INVENTORY, LOOKUP, SUMMARISE, Router, classify
 from aidoctor.llms.base import ExtractiveLLM, build_llm
 from aidoctor.models.document import Chunk, ScoredChunk
-from aidoctor.reranker.base import build_reranker
+from aidoctor.reranker.base import RerankerUnavailable, build_reranker
 from aidoctor.retrieval.hybrid import HybridRetriever
 from aidoctor.services.answerer import REFUSAL, Answerer
 from aidoctor.services.chunker import chunk_document
@@ -187,3 +189,32 @@ def test_extractive_llm_caps_sentence_count():
     chunk = Chunk("a", "d", " ".join(f"Sentence number {i} about passwords." for i in range(10)), 0, "S", "f")
     completion = ExtractiveLLM(max_sentences=2).complete("passwords", [ScoredChunk(chunk, 1.0, "hybrid")])
     assert completion.text.count("Sentence number") <= 2
+
+
+# ----------------------------------------------------------- optional extras
+
+
+def test_choosing_the_cross_encoder_without_its_extra_fails_immediately():
+    """Fail at construction, not on the first user query.
+
+    The import is lazy so the package stays installable without torch. Without
+    this check a missing dependency surfaced as a bare ModuleNotFoundError from
+    inside a reranking call — after startup had already reported healthy. Every
+    other optional dependency here fails loudly at its boundary; this one now
+    does too.
+    """
+    try:
+        import sentence_transformers  # noqa: F401
+    except ImportError:
+        pass
+    else:  # pragma: no cover - only when the extra is installed
+        pytest.skip("sentence-transformers is installed; nothing to guard")
+
+    with pytest.raises(RerankerUnavailable) as exc:
+        build_reranker("cross-encoder")
+    assert "ai-doctor[rerank]" in str(exc.value)
+
+
+def test_an_unknown_reranker_name_is_rejected():
+    with pytest.raises(ValueError, match="Unknown reranker"):
+        build_reranker("magic")
