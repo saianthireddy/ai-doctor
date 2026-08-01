@@ -2,7 +2,8 @@
   <img src="docs/assets/hero.png" alt="AI Doctor" width="820">
 </p>
 
-# AI Doctor — Production-Grade Document Intelligence and Grounded RAG
+# AI Doctor
+### Production-Grade Document Intelligence & Grounded Retrieval-Augmented Generation (RAG)
 
 **Ask questions of your own PDFs, Word documents, slide decks and spreadsheets.
 Every answer names the file and the page it came from — or says it doesn't know.**
@@ -23,6 +24,26 @@ Every answer names the file and the page it came from — or says it doesn't kno
 ---
 
 ## What it does
+
+```mermaid
+flowchart LR
+    D["Documents<br/>PDF · DOCX · PPTX<br/>XLSX · HTML · MD"] --> E["Extractors<br/><i>keep section labels</i>"]
+    E --> C["Chunking<br/><i>never spans a section</i>"]
+    C --> EM["Embeddings<br/><i>hashing · OpenAI</i>"]
+    C --> BM["BM25<br/><i>+ stemming</i>"]
+    EM --> V[("Vector store<br/>Qdrant · in-memory")]
+    V --> F["RRF fusion<br/><i>ranks, not scores</i>"]
+    BM --> F
+    F --> R["Reranker<br/><i>P@1 0.543 → 0.674</i>"]
+    R --> G{"Clears the<br/>relevance floor?"}
+    G -->|yes| A["Answer"]
+    G -->|no| X["Refuse"]
+    A --> CIT["Citations<br/><i>file + page, slide,<br/>sheet or heading</i>"]
+
+    style X fill:#7f1d1d,stroke:#ef4444,color:#fff
+    style A fill:#14532d,stroke:#22c55e,color:#fff
+    style CIT fill:#134e4a,stroke:#2dd4bf,color:#fff
+```
 
 Point it at your PDFs, Word documents, slide decks, spreadsheets, HTML and
 Markdown. It extracts them with structure intact, chunks them without splitting
