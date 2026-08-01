@@ -2,9 +2,10 @@
   <img src="docs/assets/hero.png" alt="AI Doctor" width="820">
 </p>
 
-# AI Doctor
+# AI Doctor — Production-Grade Document Intelligence and Grounded RAG
 
-**Document intelligence that cites its sources — or admits it doesn't know.**
+**Ask questions of your own PDFs, Word documents, slide decks and spreadsheets.
+Every answer names the file and the page it came from — or says it doesn't know.**
 
 [![CI](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/ci.yml)
 [![Docker](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml)
