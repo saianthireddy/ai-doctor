@@ -74,7 +74,7 @@ class ExtractiveLLM:
         return Completion(text=" ".join(chosen), model=self.name, grounded=True)
 
 
-class OpenAIChatLLM:  # pragma: no cover - requires network + key
+class OpenAIChatLLM:
     """Production generator, instructed to refuse rather than invent."""
 
     name = "openai"
@@ -86,19 +86,29 @@ class OpenAIChatLLM:  # pragma: no cover - requires network + key
     )
 
     def __init__(
-        self, model: str = "gpt-4o-mini", temperature: float = 0.0, api_key: str | None = None
+        self,
+        model: str = "gpt-4o-mini",
+        temperature: float = 0.0,
+        api_key: str | None = None,
+        client=None,
     ) -> None:
         self.model = model
         self.temperature = temperature
         self._api_key = api_key
+        self._injected = client
+
+    def _client(self):
+        if self._injected is not None:
+            return self._injected
+        from openai import OpenAI  # pragma: no cover - requires the openai extra
+
+        return OpenAI(api_key=self._api_key) if self._api_key else OpenAI()  # pragma: no cover
 
     def complete(self, question: str, passages: list[ScoredChunk]) -> Completion:
-        from openai import OpenAI
-
         if not passages:
             return Completion(text="", model=self.model, grounded=False)
         context = "\n\n".join(f"[{p.chunk.citation}]\n{p.chunk.text}" for p in passages)
-        client = OpenAI(api_key=self._api_key) if self._api_key else OpenAI()
+        client = self._client()
         response = client.chat.completions.create(
             model=self.model,
             temperature=self.temperature,

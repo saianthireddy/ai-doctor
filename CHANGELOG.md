@@ -8,6 +8,24 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Cross-encoder reranking moved from 🟡 Written, unverified to ✅ Implemented**, exercised in CI against the real
+  `ms-marco-MiniLM-L-6-v2` model, with behavioural assertions — it must promote
+  the passage that answers the question, and separate *parental* leave from
+  *annual* leave, which is the near-miss the lexical floor cannot catch.
+- **12 tests for the OpenAI paths against an injected stub client.** These do
+  not call the API and the row stays 🟡; what they cover is the code around the
+  call, all of which was previously `# pragma: no cover`.
+
+### Fixed
+
+- **`OpenAIEmbedder` never sent `dimensions` to the API.** `text-embedding-3-*`
+  returns the model's full width unless asked otherwise, so configuring 384
+  built a vector store expecting 384 while vectors arrived at 1536 — a mismatch
+  that only surfaced at upsert, far from its cause. It is now sent, and a width
+  check fails immediately if the API ever ignores it.
+
+### Added
+
 - **Postgres and Qdrant *server* mode moved from 🟡 Declared to ✅ Implemented**,
   exercised in CI against real
   service containers, running the same contract suites the embedded backends

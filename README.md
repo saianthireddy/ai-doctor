@@ -10,7 +10,7 @@
 [![Docker](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml/badge.svg)](https://github.com/saianthireddy/ai-doctor/actions/workflows/docker.yml)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)](https://github.com/saianthireddy/ai-doctor)
 [![Coverage](https://img.shields.io/badge/coverage-93%25-brightgreen)](#testing)
-[![Tests](https://img.shields.io/badge/tests-166-brightgreen)](#testing)
+[![Tests](https://img.shields.io/badge/tests-179-brightgreen)](#testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
@@ -77,14 +77,14 @@ because a claim you can't check is worth less than a smaller one you can.
 | FastAPI REST API + OpenAPI | ✅ **Implemented** | 18 tests |
 | SQLAlchemy metadata store | ✅ **Implemented** | 8 direct contract tests, on both engines |
 | Docker image (multi-stage, non-root) | ✅ **Implemented** | built **and booted** in CI |
-| OpenAI embeddings + chat generation | 🟡 **Written, unverified** | needs an API key; not exercised in CI |
-| Cross-encoder reranking | 🟡 **Written, unverified** | needs the `[rerank]` extra, then a model download |
+| OpenAI embeddings + chat generation | 🟡 **Written, unverified** | 12 tests cover the request/response handling **against a stub**; the API itself is never called (needs a key) |
+| Cross-encoder reranking | ✅ **Implemented** | 5 behavioural tests against the **real model** in CI |
 | Postgres backend | ✅ **Implemented** | 8 contract tests against a **real Postgres service** in CI |
 | Qdrant *server* mode | ✅ **Implemented** | the **same contract suite** as embedded, against a real server in CI |
 | Knowledge graph, Celery workers, K8s, Terraform | ❌ **Not built** | see [ROADMAP.md](ROADMAP.md) |
 
 🟡 means the code exists and is structured behind an interface, but **no test
-proves it works** — because it needs an API key or a model download CI doesn't have.
+proves it works** — the one remaining case needs an API key CI doesn't have.
 ❌ means it isn't there at all. Neither is claimed as working.
 
 ---
@@ -132,7 +132,7 @@ cd ai-doctor
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 
-make test        # 150 tests offline; 16 more need the CI service containers
+make test        # 162 tests offline; 17 more need CI's services and extras
 make demo        # ingest the sample corpus and ask it questions
 make run         # serve on http://localhost:8000  (docs at /docs)
 ```
@@ -245,8 +245,9 @@ via environment variable when you want real quality. The reranker is named
 make cov
 ```
 
-**166 tests, 93% coverage.** 150 run offline in ~3s; the other 16 hold Postgres and
-Qdrant *server* mode to the same contracts and run against real services in CI.
+**179 tests, 93% coverage.** 162 run offline in ~3s. The other 17 need things a
+laptop shouldn't have to install: Postgres and Qdrant *server* mode run against
+real service containers in CI, and the cross-encoder runs against the real model.
 
 | Suite | Focus |
 |---|---|

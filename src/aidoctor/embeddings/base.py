@@ -78,27 +78,48 @@ class OpenAIEmbedder:
         dimensions: int = 1536,
         batch_size: int = 128,
         api_key: str | None = None,
+        client=None,
     ) -> None:
         self.model = model
         self.dimensions = dimensions
         self.batch_size = batch_size
         self._api_key = api_key
+        # Injectable so the request we build and the response we parse can be
+        # tested without a key. The network call is not the risky part; the
+        # batching, ordering and dimension handling around it are.
+        self._injected = client
 
-    def _client(self):  # pragma: no cover - requires network + key
-        from openai import OpenAI
+    def _client(self):
+        if self._injected is not None:
+            return self._injected
+        from openai import OpenAI  # pragma: no cover - requires the openai extra
 
-        return OpenAI(api_key=self._api_key) if self._api_key else OpenAI()
+        return OpenAI(api_key=self._api_key) if self._api_key else OpenAI()  # pragma: no cover
 
-    def embed_one(self, text: str) -> np.ndarray:  # pragma: no cover - requires network
+    def embed_one(self, text: str) -> np.ndarray:
         return self.embed_many([text])[0]
 
-    def embed_many(self, texts: list[str]) -> list[np.ndarray]:  # pragma: no cover - network
+    def embed_many(self, texts: list[str]) -> list[np.ndarray]:
         client = self._client()
         out: list[np.ndarray] = []
         for start in range(0, len(texts), self.batch_size):
             batch = texts[start : start + self.batch_size]
-            response = client.embeddings.create(model=self.model, input=batch)
+            # `dimensions` must be sent. text-embedding-3-* defaults to the
+            # model's full width (1536 for -small), so omitting it while the
+            # vector store was sized from `self.dimensions` produced a store
+            # expecting 384 and vectors arriving at 1536 — a mismatch that only
+            # surfaced at upsert, far from its cause.
+            response = client.embeddings.create(model=self.model, input=batch, dimensions=self.dimensions)
             out.extend(np.asarray(item.embedding, dtype=np.float32) for item in response.data)
+
+        wrong = [v.shape[0] for v in out if v.shape[0] != self.dimensions]
+        if wrong:
+            raise ValueError(
+                f"{self.model} returned {wrong[0]}-dimensional vectors but this "
+                f"embedder is configured for {self.dimensions}. The vector store "
+                "is sized from the latter, so indexing would fail later and "
+                "further from the cause."
+            )
         return out
 
 
