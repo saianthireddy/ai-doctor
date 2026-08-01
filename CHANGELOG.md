@@ -8,7 +8,7 @@ versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- **Cross-encoder reranking is exercised in CI** against the real
+- **Cross-encoder reranking moved from 🟡 Written, unverified to ✅ Implemented**, exercised in CI against the real
   `ms-marco-MiniLM-L-6-v2` model, with behavioural assertions — it must promote
   the passage that answers the question, and separate *parental* leave from
   *annual* leave, which is the near-miss the lexical floor cannot catch.

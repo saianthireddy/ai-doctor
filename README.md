@@ -78,13 +78,13 @@ because a claim you can't check is worth less than a smaller one you can.
 | SQLAlchemy metadata store | ✅ **Implemented** | 8 direct contract tests, on both engines |
 | Docker image (multi-stage, non-root) | ✅ **Implemented** | built **and booted** in CI |
 | OpenAI embeddings + chat generation | 🟡 **Written, unverified** | 12 tests cover the request/response handling **against a stub**; the API itself is never called (needs a key) |
-| Cross-encoder reranking | 🟡 **Written, unverified** | needs the `[rerank]` extra, then a model download |
+| Cross-encoder reranking | ✅ **Implemented** | 5 behavioural tests against the **real model** in CI |
 | Postgres backend | ✅ **Implemented** | 8 contract tests against a **real Postgres service** in CI |
 | Qdrant *server* mode | ✅ **Implemented** | the **same contract suite** as embedded, against a real server in CI |
 | Knowledge graph, Celery workers, K8s, Terraform | ❌ **Not built** | see [ROADMAP.md](ROADMAP.md) |
 
 🟡 means the code exists and is structured behind an interface, but **no test
-proves it works** — because it needs an API key or a model download CI doesn't have.
+proves it works** — the one remaining case needs an API key CI doesn't have.
 ❌ means it isn't there at all. Neither is claimed as working.
 
 ---
