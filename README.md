@@ -21,6 +21,10 @@ Every answer names the file and the page it came from — or says it doesn't kno
 > medical, clinical, diagnostic or health advice of any kind, and must not be used
 > for any such purpose. The name refers to examining a document corpus.
 
+<p align="center">
+    <img src="docs/assets/ai-doctor-demo.gif" alt="AI Doctor demo: ingest, grounded answers with citations, refusal when out of corpus" width="820">
+</p>
+
 ---
 
 ## What it does
