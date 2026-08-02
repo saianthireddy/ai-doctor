@@ -62,5 +62,8 @@ Honest about uncertainty — these are interesting, not committed:
 - Connectors for Confluence, Notion, SharePoint, Slack, Jira and Drive. Each is a
   real integration with real auth, and listing them without building them is the
   thing this project is trying not to do.
+- Celery, or any distributed task queue, as a dependency. The background
+  ingestion planned for 0.4.0 is an in-process job API; if that proves
+  insufficient, a queue gets revisited then rather than assumed now.
 - Kubernetes manifests and Terraform. Meaningless without a deployment that needs
   them; the Docker image and Compose file cover single-node.
