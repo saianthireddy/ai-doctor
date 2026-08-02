@@ -107,7 +107,8 @@ because a claim you can't check is worth less than a smaller one you can.
 | Cross-encoder reranking | ✅ **Implemented** | 5 behavioural tests against the **real model** in CI |
 | Postgres backend | ✅ **Implemented** | 8 contract tests against a **real Postgres service** in CI |
 | Qdrant *server* mode | ✅ **Implemented** | the **same contract suite** as embedded, against a real server in CI |
-| Knowledge graph, Celery workers, K8s, Terraform | ❌ **Not built** | see [ROADMAP.md](ROADMAP.md) |
+| Knowledge graph | ❌ **Not built** | considered, not committed — see [ROADMAP.md](ROADMAP.md) |
+| Celery workers, K8s, Terraform | ❌ **Not built** | explicitly not planned — see [ROADMAP.md](ROADMAP.md) |
 
 🟡 means the code exists and is structured behind an interface, but **no test
 proves it works** — the one remaining case needs an API key CI doesn't have.
