@@ -31,11 +31,11 @@ returned the whole index. It was expanded to 67 chunks first.
 
 ## 0.3.0 — verifying the 🟡 rows
 
-- [ ] Postgres exercised in CI via a service container, promoting it to ✅.
-- [ ] Qdrant **server** mode exercised in CI alongside embedded.
+- [x] Postgres exercised in CI via a service container, promoting it to ✅.
+- [x] Qdrant **server** mode exercised in CI alongside embedded.
 - [ ] OpenAI paths behind a recorded-cassette test so they are covered without a
       live key.
-- [ ] Cross-encoder reranking with a cached model, and a measured comparison
+- [x] Cross-encoder reranking with a cached model, and a measured comparison
       against the lexical reranker. If it does not win, that gets published too.
 
 ## 0.4.0 — scale and safety
