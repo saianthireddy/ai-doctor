@@ -345,7 +345,7 @@ Everything is optional — see [.env.example](.env.example).
 | `RERANKER` | `lexical-overlap` | `none`, `lexical-overlap`, `cross-encoder` |
 | `LLM` | `extractive` | `extractive` (offline) or `openai` |
 | `DATABASE_URL` | `sqlite:///./data/aidoctor.db` | Any SQLAlchemy URL. Postgres needs `pip install -e ".[postgres]"` for the driver |
-| `MIN_RELEVANCE` | `0.12` | Below this, answers are refused |
+| `MIN_RELEVANCE` | `0.15` | Below this, answers are refused |
 
 ---
 
@@ -365,7 +365,7 @@ src/aidoctor/
   api/           routes, schemas, wiring
   config/        environment settings
 docs/            architecture, api, deployment, evaluation
-tests/           114 tests mirroring src/
+tests/           179 tests mirroring src/
 examples/corpus/ sample documents for the demo
 ```
 
@@ -380,7 +380,7 @@ examples/corpus/ sample documents for the demo
 | [deployment.md](docs/deployment.md) | Docker, Compose, production paths |
 | [ai-agents.md](docs/ai-agents.md) | The router, honestly described |
 | [vector-search.md](docs/vector-search.md) | Hybrid retrieval and RRF |
-| [evaluation.md](docs/evaluation.md) | How to measure this, and why there's no headline metric yet |
+| [evaluation.md](docs/evaluation.md) |Method, threshold sweep and published numbers |
 | [CONTRIBUTING.md](CONTRIBUTING.md) · [SECURITY.md](SECURITY.md) · [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) · [ROADMAP.md](ROADMAP.md) · [CHANGELOG.md](CHANGELOG.md) | |
 
 ---
@@ -390,13 +390,9 @@ examples/corpus/ sample documents for the demo
 Stated plainly, because you'll find them anyway:
 
 - **No OCR.** Scanned PDFs are rejected with a clear error rather than ingested empty.
-- **No published retrieval metric.** There's no labelled test set yet, and a
-  number without one would be theatre. [evaluation.md](docs/evaluation.md)
-  describes the harness that would produce one.
 - **The default embedder isn't semantic.** Hashing sees token overlap only.
 - **Single-node.** In-process ingestion, no distributed queue.
 - **No auth.** There's no authentication layer; don't expose this publicly as-is.
-- **Postgres and Qdrant-server are unverified.** Declared in Compose, not tested.
 
 ## License
 
